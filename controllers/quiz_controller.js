@@ -25,7 +25,7 @@ exports.index = function(req,res){
     }else{
         models.Quiz.findAll().then(
             function(quizes){
-            res.render('quizes/index',{quizes:quizes,errors: []});
+            res.render('quizes/index.ejs',{quizes:quizes,errors: []});
         }
         ).catch(function(error) {next(error);});
        
@@ -79,5 +79,30 @@ exports.create = function(req,res){
         );
 };
 
+// GET /quizes/:id/edit
+exports.edit = function(req,res){
+    var quiz = req.quiz; // autoload de instancia quiz
+    res.render('quizes/edit',{quiz:quiz,errors:[]});
+};
+
+// PUT /quizes/:id
+exports.update = function(req,res){
+    req.quiz.pregunta = req.body.pregunta;
+    req.quiz.respuesta = req.body.respuesta;
+    
+    req.quiz
+    .validate()
+    .then(
+        function(err){
+            if (err){
+                res.render('quizes/edit',{quiz:req.quiz,errors:err.errors});
+            }else{
+                req.quiz // save : guardar campos preunta y respuesta en BD
+                .save({fields:["pregunta","respuesta"]})
+                .then( function(){res.redirect('/quizes');});
+            } // redireccion a HTTP a lista de preguntas
+        }
+        );
+};
 
 
