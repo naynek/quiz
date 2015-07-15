@@ -16,7 +16,8 @@ exports.load = function(req,res,next,quizId){
 exports.index = function(req,res){
     if (req.query.search){
          var busqueda = req.query.search.replace(/\s+/g, "%");
-         models.Quiz.findAll({where: ["pregunta like ?", "%" + busqueda + "%"],order: 'pregunta ASC'}).then(
+        
+         models.Quiz.findAll({where: ["upper(pregunta like ?)", "%" + busqueda.toUpperCase() + "%"],order: 'pregunta ASC'}).then(
         function(quizes){
             res.render('quizes/index',{quizes:quizes, errors: []});
         }
@@ -53,7 +54,7 @@ exports.author = function(req,res){
 // GET /quizes/new
 exports.new = function(req,res){
     var quiz = models.Quiz.build( // crea objeto quiz
-        {pregunta:"Pregunta",respuesta:"Respuesta"}
+        {pregunta:"Pregunta",respuesta:"Respuesta",tema:"Tema"}
         );
     res.render('quizes/new',{quiz:quiz,errors:[]});
 };
@@ -71,7 +72,7 @@ exports.create = function(req,res){
             } else {
     // guardar en DB los campos pregunta y respuesta de quiz
     quiz
-    .save({fields:["pregunta","respuesta"]})
+    .save({fields:["pregunta","respuesta","tema"]})
     .then(function(){res.redirect('/quizes')}) 
     // Redireccion HTTP (URL relativo) lista de preguntas
 }
@@ -87,8 +88,9 @@ exports.edit = function(req,res){
 
 // PUT /quizes/:id
 exports.update = function(req,res){
-    req.quiz.pregunta = req.body.pregunta;
-    req.quiz.respuesta = req.body.respuesta;
+    req.quiz.pregunta = req.body.quiz.pregunta;
+    req.quiz.respuesta = req.body.quiz.respuesta;
+    req.quiz.tema = req.body.quiz.tema;
     
     req.quiz
     .validate()
@@ -98,7 +100,7 @@ exports.update = function(req,res){
                 res.render('quizes/edit',{quiz:req.quiz,errors:err.errors});
             }else{
                 req.quiz // save : guardar campos preunta y respuesta en BD
-                .save({fields:["pregunta","respuesta"]})
+                .save({fields:["pregunta","respuesta","tema"]})
                 .then( function(){res.redirect('/quizes');});
             } // redireccion a HTTP a lista de preguntas
         }
