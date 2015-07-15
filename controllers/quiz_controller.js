@@ -15,8 +15,8 @@ exports.load = function(req,res,next,quizId){
 // GET /quizes
 exports.index = function(req,res){
     if (req.query.search){
-         var busqueda = req.query.search.replace(/\s+/g, '%');
-         models.Quiz.findAll({where: ["pregunta like ?", "%" + busqueda+ "%"]}).then(
+         var busqueda = req.query.search.replace(/\s+/g, "%");
+         models.Quiz.findAll({where: ["pregunta like ?", "%" + busqueda + "%"],order: 'pregunta ASC'}).then(
         function(quizes){
             res.render('quizes/index',{quizes:quizes});
         }
@@ -50,8 +50,22 @@ exports.author = function(req,res){
     res.render('autor',{autor:'Nayn Ek'});
 };
 
-exports.search = function(req,res){
+// GET /quizes/new
+exports.new = function(req,res){
+    var quiz = models.Quiz.build( // crea objeto quiz
+        {pregunta:"Pregunta",respuesta:"Respuesta"}
+        );
+    res.render('quizes/new',{quiz:quiz});
+};
+
+// POST /quizes/create
+exports.create = function(req,res){
+    var quiz = models.Quiz.build(req.body.quiz);
     
+    // guardar en DB los campos pregunta y respuesta de quiz
+    quiz.save({fields:["pregunta","respuesta"]}).then(function(){
+        res.redirect('/quizes');
+    }) // Redireccion HTTP (URL relativo) lista de preguntas
 };
 
 
