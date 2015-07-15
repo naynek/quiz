@@ -11,6 +11,7 @@ router.get('/', function(req, res) {
 router.get('/author',quizController.author);
 
 router.param('quizId',quizController.load); // autoload :quizId
+router.param('search',quizController.load);
 // Definicion de ruas de /quizes
 router.get('/quizes',quizController.index);
 router.get('/quizes/:quizId(\\d+)',quizController.show);
