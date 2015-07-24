@@ -60,6 +60,6 @@ sequelize.sync().then(function(){
         };
     });
 });
-exports.Consulta = function(){ return sequelize.query('select QuizId, count(*) as "rep" from "Comments" group by QuizId', { type: sequelize.QueryTypes.SELECT});};
+exports.Consulta = function(){ return sequelize.query('select QuizId, count(*) as "rep" from "Comments" group by "QuizId"', { type: sequelize.QueryTypes.SELECT});};
   
 
