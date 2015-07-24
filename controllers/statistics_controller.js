@@ -17,7 +17,7 @@ exports.index = function(req,res){
         function(data){
             var sum = 0;
             for (var i=0; i<data.length; i++) {
-                        sum += data[i].rep;
+                        sum += parseInt(data[i].rep);
             }
             var prom = sum/data.length;
             NumPromComment = prom;
